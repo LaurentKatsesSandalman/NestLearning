@@ -1,8 +1,9 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Req, Res, Query, Param, Body } from '@nestjs/common';
 import { FilterService } from 'src/filter/filter.service';
 import { User } from '../entities/user.model';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('/hello')
 export class AppController {
@@ -11,6 +12,8 @@ export class AppController {
     private readonly filterService: FilterService,
   ) {}
 
+  
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   getHello(): string {
     return this.appService.getHello();

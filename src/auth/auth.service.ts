@@ -11,26 +11,25 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  private async authUser(email: string): Promise<User | null> {
-    //private: on part du principe que cette fonction ne peut être utilisé que par la fonction "login" qui est aussi dans la classe
+  public async validateUser(email: string): Promise<User | null> {
     return await this.usersService.getUserByEmail(email);
   }
 
-  private hash(password): string {
+  private hash(password: string): string {
     return crypto.createHmac('sha256', password).digest('hex');
   }
 
-  public async register(user):Promise<any>{
+  public async registerUser(user:User):Promise<User>{
     user.password = this.hash(user.password)
     return this.usersService.saveUser(user)
   }
   
-  public async login(
+  public async loginUser(
     user: User,
   ): Promise<
     { expires_in: number; access_token: string } | { status: number }
   > {
-    return this.authUser(user.email).then((userData) => {
+    return this.validateUser(user.email).then((userData) => {
       if (!userData || userData.password != this.hash(user.password)) {
         return { status: 404 };
       }
